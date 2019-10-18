@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        position: relative;
+        margin: 0 auto;
+        width: 300px;
+        height: 600px;
+        padding: 2px;
+        background-color: coral;
+        /* text-align: center */
+    }
+
+    .shuru {
+        width: 100%;
+        font-size: 0;
+    }
+
+    .shuru>input {
+        font-size: 20px;
+        width: 80%;
+        border: 0;
+        padding: 0;
+    }
+
+    .shanc {
+        text-decoration: line-through;
+        color: antiquewhite;
+    }
+
+    .shuru>button {
+        font-size: 20px;
+        width: 20%;
+        border: 0;
+        padding: 0;
+    }
+
+
+    .shilie,
+    .shilie_box {
+        width: 100%;
+    }
+
+    .shilie {
+        overflow-y: auto;
+        height: 80%;
+    }
+
+    .shilie_box {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid black;
+        font-size: 20px;
+    }
+
+    .shilie_box>span:nth-child(1) {
+        user-select: none;
+        display: inline-block;
+        width: 90%
+    }
+
+    .close {
+        float: right;
+        user-select: none;
+        text-align: center;
+        display: block;
+        width: 20px;
+        height: 20px;
+        height: 100%;
+        background-color: #cf0;
+        border-radius: 50%;
+    }
+
+    .bottom {
+        user-select: none;
+        position: absolute;
+        bottom: 0;
+    }
+
+    .zhongle {
+        color: #fff;
+    }
+</style>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+    <div id='app'>
+        <div class="box">
+            <div class="shuru">
+                <input type="text" name="" id="" v-model.trim='shijianname'>
+                <button @click='addshijian'>add</button>
+            </div>
+            <div class="shilie">
+                <div class="shilie_box" v-for='(it,i) in arr' :key='it.name'>
+                    <span :class="{shanc:!it.now}" @click='wodian(it.name)'>{{it.name}}</span>
+                    <span class="close" @click='del(it.name)'>X</span>
+                </div>
+            </div>
+
+            <div class="bottom">
+                <span :class="{zhongle: yingc}" @click='quand'>全部</span>
+                <span :class="{zhongle: (!yingc)&&(yingc2)}" @click='quand1'>完成</span>
+                <span :class="{zhongle: (!yingc)&&(!yingc2)}" @click='quand2'>未完成</span>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                shujian: [
+                    {
+                        name: '我要',
+                        now: true
+                    },
+                    {
+                        name: '我不要',
+                        now: false
+                    },
+                ],
+                shijianname: '',
+                yingc: true,//全还是限
+                yingc2: false,//t限未 f限完
+            },
+            computed: {
+                arr() {
+                    let aee1=[];
+                    if (this.yingc) {
+                        return this.shujian;
+                    } else if (this.yingc2) {
+
+                        return this.shujian.filter(function(a){
+                            console.log(a)
+                             return a.now;
+                        })
+
+                        // for(let i=0;i<this.shujian.length;i++){
+                        //     if(!this.shujian[i].now){
+                        //         aee1.push(this.shujian[i]);
+                        //     }
+                        // }
+                        // return aee1;
+                    } else {
+                        return this.shujian.filter(function(a){
+                            console.log(a)
+                             return !a.now;
+                        })
+
+
+                        // for(let i=0;i<this.shujian.length;i++){
+                        //     if(this.shujian[i].now){
+                        //         aee1.push(this.shujian[i]);
+                        //     }
+                        // }
+                        // return aee1;
+                        
+                    }
+                },
+            },
+
+            methods: {
+                addshijian() {
+
+                    for (let i = 0; i < this.shujian.length; i++) {
+                        if (this.shujian[i].name == this.shijianname ||this.shijianname=='') {
+                            this.shijianname = ''
+                            return;
+                        }
+                    }
+                    // this.$set(this.shujian, this.shijianname, true);
+                    this.shujian.push({
+                        name: this.shijianname,
+                        now: true
+                    })
+                    this.shijianname = ''
+                },
+                del(j) {
+                    console.log(j);
+                    this.shujian=this.shujian.filter(function(a){
+                            console.log(a.name,j)
+                             return a.name != j;
+                        })
+                    // for (let i = 0; i < this.shujian.length; i++) {
+                    //     if (this.shujian[i].name == j) {
+                    //         this.shujian.splice(i, 1);
+                    //     }
+                    // }
+                },
+                wodian(j) {
+                    console.log(j);
+                    for (let i = 0; i < this.shujian.length; i++) {
+                        if (this.shujian[i].name == j) {
+                            this.shujian[i].now = this.shujian[i].now ? false : true;
+                            return;
+                        }
+                    }
+                },
+                quand() {
+                    this.yingc = true;
+                },
+                quand1() {
+                    this.yingc = false;
+                    this.yingc2 = true;
+                },
+                quand2() {
+                    this.yingc = false;
+                    this.yingc2 = false;
+                },
+            }
+        })
+    </script>
+</body>
+
+
+</html>
